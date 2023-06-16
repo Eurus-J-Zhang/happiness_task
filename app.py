@@ -4,6 +4,7 @@ from datetime import datetime
 from flask_migrate import Migrate
 # from form import EmotionForm
 import csv
+import os
 
 from flask_wtf import FlaskForm
 from wtforms import RadioField, SubmitField
@@ -16,9 +17,13 @@ class EmotionForm(FlaskForm):
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SECRET_KEY'] = "iloveeurus"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+# app.config['SECRET_KEY'] = "iloveeurus"
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+class Config(object):
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///test.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
