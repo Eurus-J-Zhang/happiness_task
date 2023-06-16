@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block main_text %}
+<p class="t_note">
+  What emotions are you feeling now?
+</p>
+
+
+<form method="POST">
+  {{ form.hidden_tag() }}
+  <table>
+      <tr>
+          <th></th>
+          <th>0</th>
+          <th>1</th>
+          <th>2</th>
+          <th>3</th>
+          <th>4</th>
+          <th>5</th>
+      </tr>
+      <tr>
+          <td>{{ form.happy_level.label }}</td>
+          {% for subfield in form.happy_level %}
+          <td>{{ subfield }}</td>
+          {% endfor %}
+      </tr>
+      <tr>
+          <td>{{ form.sad_level.label }}</td>
+          {% for subfield in form.sad_level %}
+          <td>{{ subfield }}</td>
+          {% endfor %}
+      </tr>
+  </table>
+  <input type="submit" value="Submit" onclick="myFunction()" class = "submitbutton">
+</form>
+
+
+
+
+{% endblock %}
+
+{% block second_text %}
+<!-- <p class="t_note">
+    Please continue if you understand and would like to participate. </p>
+</p> -->
+{% endblock %}

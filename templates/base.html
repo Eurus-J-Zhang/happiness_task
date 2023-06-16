@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel= "stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="shortcut icon" href="#">
+        <title>Interactive Task</title>
+        <script>
+        // function fn1(){
+        //     window.location="../0_story/index.html";
+        // }
+        function myFunction() {
+            alert("Button clicked!");
+        }
+        </script>
+    </head>
+    <body>     
+        <div class="grid-parent">
+
+            <div class = "title name"> 
+            </div>
+            <div class = "instruction"> 
+                <!-- <p class="t_note">
+                    Please read and follow the instrucitons.</p> -->
+            </div>
+            <div class = "story"> 
+                {% block main_text %}{% endblock %}
+            </div>
+            <div class = "choices"> 
+                {% block second_text %}{% endblock %}
+            </div>
+            <!-- <div class = "continue">   
+                <button onclick="fn1()" id="btn1" class = "submitbutton">Continue</button>
+            </div> -->
+        </div>
+    </body>
+</html>
