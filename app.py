@@ -17,7 +17,7 @@ class EmotionForm(FlaskForm):
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('JAWSDB_URL') or'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 # app.config['SECRET_KEY'] = "iloveeurus"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
