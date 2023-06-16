@@ -22,7 +22,7 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 class Config(object):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///test.db'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('JAWSDB_URL') or 'sqlite:///test.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 db = SQLAlchemy(app)
