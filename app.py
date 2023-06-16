@@ -5,6 +5,8 @@ from flask_migrate import Migrate
 # from form import EmotionForm
 import csv
 import os
+import pymysql
+
 
 from flask_wtf import FlaskForm
 from wtforms import RadioField, SubmitField
@@ -14,7 +16,7 @@ class EmotionForm(FlaskForm):
     sad_level = RadioField('Sad', choices=[ ('0', 'Option 0'), ('1', 'Option 1'), ('2', 'Option 2'), ('3', 'Option 3'), ('4', 'Option 4'), ('5', 'Option 5')])
     submit = SubmitField('Submit')
 
-
+pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('JAWSDB_URL')
