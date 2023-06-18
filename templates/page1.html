@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title_text %}
+<p class="t_title">Mandatory questions are marked with a star (*)
+</p>
+{% endblock %}
+
+{% block main_text %}
+<p class="t_title">
+  1. What emotions are you feeling now?
+
+</p>
+
+<p class = 't_note'>
+    0 = not experiencing this emotion at all, 
+    5= experiencing this emotion moderately, 
+    10 = experiencing this emotion intensely
+</p>
+
+
+<form method="POST">
+  {{ form.hidden_tag() }}
+  
+  <table>
+      <tr>
+          <th></th>
+          <th>0</th>
+          <th>1</th>
+          <th>2</th>
+          <th>3</th>
+          <th>4</th>
+          <th>5</th>
+          <th>6</th>
+          <th>7</th>
+          <th>8</th>
+          <th>9</th>
+          <th>10</th>
+      </tr>
+      <tr>
+
+          <td>{{ form.happiness_level.label }}</td>
+          {% for subfield in form.happiness_level %}
+          <td><div class="radio-button">{{ subfield }}</div></td>
+          {% endfor %}
+      </tr>
+      <tr>
+        <td>{{ form.pride_level.label }}</td>
+        {% for subfield in form.pride_level %}
+        <td><div class="radio-button">{{ subfield }}</div></td>
+        {% endfor %}
+    </tr>
+    <tr>
+        <td>{{ form.boredom_level.label }}</td>
+        {% for subfield in form.boredom_level %}
+        <td><div class="radio-button">{{ subfield }}</div></td>
+        {% endfor %}
+    </tr>
+      <tr>
+          <td>{{ form.sadness_level.label }}</td>
+          {% for subfield in form.sadness_level %}
+          <td><div class="radio-button">{{ subfield }}</div></td>
+          {% endfor %}
+      </tr>
+      <tr>
+        <td>{{ form.irritation_level.label }}</td>
+        {% for subfield in form.irritation_level %}
+        <td><div class="radio-button">{{ subfield }}</div></td>
+        {% endfor %}
+    </tr>
+
+  </table>
+
+  <input type="submit" value="Continue" class = "submitbutton">
+</form>
+
+
+
+
+
+
+{% endblock %}
+
+{% block second_text %}
+<!-- <p class="t_note">
+    Please continue if you understand and would like to participate. </p>
+</p> -->
+{% endblock %}

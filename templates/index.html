@@ -1,37 +1,45 @@
 {% extends 'base.html' %}
 
 {% block main_text %}
-<p class="t_note">
-  What emotions are you feeling now?
+<p class="t_title">
+  Hello, welcome to our experiment! <br>
+  <br>
+  Here, you will firstly be asked to fill a questionnaire about your current emotional state. <br>
+  And then you would be shown a task that is designed to arouse a certain emotion in you. <br><br>
+  This task is about reading a paragraph, and answering some related questions. <br>
+  You don’t need to remember anything, the paragraph will be presented with the questions all the time.<br>
+  In the middle and at end of the task, you'll be asked to fill questionnaires about your emotional states as well. <br>
+  <br>
+  
+  The whole task will take you around 15 minutes in total.<br>
+
+  Please enter your prolific id and demographic information to start this experiment:
 </p>
 
 
 <form method="POST">
-  {{ form.hidden_tag() }}
-  <table>
-      <tr>
-          <th></th>
-          <th>0</th>
-          <th>1</th>
-          <th>2</th>
-          <th>3</th>
-          <th>4</th>
-          <th>5</th>
-      </tr>
-      <tr>
-          <td>{{ form.happy_level.label }}</td>
-          {% for subfield in form.happy_level %}
-          <td>{{ subfield }}</td>
-          {% endfor %}
-      </tr>
-      <tr>
-          <td>{{ form.sad_level.label }}</td>
-          {% for subfield in form.sad_level %}
-          <td>{{ subfield }}</td>
-          {% endfor %}
-      </tr>
-  </table>
-  <input type="submit" value="Submit" onclick="myFunction()" class = "submitbutton">
+    {{ form.hidden_tag() }}
+
+    <label for="id">Prolific ID</label>
+<br>
+    {{ form.id(id='id') }}
+<br>
+
+    <div class="form-group">
+      <label>Gender</label>
+<!-- <br> -->
+      <div class="form-options">
+        {% for subfield in form.gender %}
+        <label>{{ subfield }} {{ subfield.label }}</label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <label for="age">Age</label>
+    <br>
+    {{ form.age(id='age') }}
+    <br>
+    <input type="submit" value="Start">
 </form>
 
 

@@ -8,9 +8,9 @@
         // function fn1(){
         //     window.location="../0_story/index.html";
         // }
-        function myFunction() {
-            alert("Button clicked!");
-        }
+        // function FormSubmit() {
+        //     alert("Experiment complete!");
+        // }
         </script>
     </head>
     <body>     
@@ -21,6 +21,7 @@
             <div class = "instruction"> 
                 <!-- <p class="t_note">
                     Please read and follow the instrucitons.</p> -->
+                {% block title_text %}{% endblock %}
             </div>
             <div class = "story"> 
                 {% block main_text %}{% endblock %}

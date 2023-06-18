@@ -1,4 +1,4 @@
-from flask import Flask,render_template,url_for,request, redirect, send_from_directory
+from flask import Flask,render_template,url_for,request, redirect, send_from_directory, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
@@ -9,17 +9,46 @@ import pymysql
 
 
 from flask_wtf import FlaskForm
-from wtforms import RadioField, SubmitField
+from wtforms import RadioField, SubmitField, StringField, IntegerField
+from wtforms.validators import DataRequired, NumberRange
 
+# Here is for Prolific ID and gender and age
+class DemographicInfo(FlaskForm):
+    id = StringField('Prolific ID', validators=[DataRequired()])
+    gender = RadioField('Gender', choices=[('M','Male'),('F','Female'),('O','Others')], validators=[DataRequired()])
+    age = IntegerField('Age', validators=[DataRequired(), NumberRange(min=18, max=80)])
+    # submit = SubmitField('Submit')
+
+# Here is the initial emotion check
 class EmotionForm(FlaskForm):
-    happy_level = RadioField('Happy', choices=[('0', 'Option 0'),('1', 'Option 1'), ('2', 'Option 2'), ('3', 'Option 3'), ('4', 'Option 4'), ('5', 'Option 5')])
-    sad_level = RadioField('Sad', choices=[ ('0', 'Option 0'), ('1', 'Option 1'), ('2', 'Option 2'), ('3', 'Option 3'), ('4', 'Option 4'), ('5', 'Option 5')])
-    submit = SubmitField('Submit')
+    happiness_level = RadioField('Happiness*', choices=[('0', 'Opt0'),('1', 'Opt1'), ('2', 'Opt2'), 
+                                               ('3', 'Opt3'), ('4', 'Opt4'), ('5', 'Opt5'),
+                                               ('6', 'Opt6'), ('7', 'Opt7'), ('8', 'Opt8'),
+                                               ('9', 'Opt9'), ('10', 'Opt10')], validators=[DataRequired()])
+    pride_level = RadioField('Pride*', choices=[('0', 'Opt0'),('1', 'Opt1'), ('2', 'Opt2'), 
+                                               ('3', 'Opt3'), ('4', 'Opt4'), ('5', 'Opt5'),
+                                               ('6', 'Opt6'), ('7', 'Opt7'), ('8', 'Opt8'),
+                                               ('9', 'Opt9'), ('10', 'Opt10')], validators=[DataRequired()])
+    boredom_level = RadioField('Boredom*', choices=[('0', 'Opt0'),('1', 'Opt1'), ('2', 'Opt2'), 
+                                               ('3', 'Opt3'), ('4', 'Opt4'), ('5', 'Opt5'),
+                                               ('6', 'Opt6'), ('7', 'Opt7'), ('8', 'Opt8'),
+                                               ('9', 'Opt9'), ('10', 'Opt10')], validators=[DataRequired()])
+    
+    sadness_level = RadioField('Sadness*', choices=[('0', 'Opt0'),('1', 'Opt1'), ('2', 'Opt2'), 
+                                               ('3', 'Opt3'), ('4', 'Opt4'), ('5', 'Opt5'),
+                                               ('6', 'Opt6'), ('7', 'Opt7'), ('8', 'Opt8'),
+                                               ('9', 'Opt9'), ('10', 'Opt10')], validators=[DataRequired()])
+
+    irritation_level = RadioField('Irritation*', choices=[('0', 'Opt0'),('1', 'Opt1'), ('2', 'Opt2'), 
+                                               ('3', 'Opt3'), ('4', 'Opt4'), ('5', 'Opt5'),
+                                               ('6', 'Opt6'), ('7', 'Opt7'), ('8', 'Opt8'),
+                                               ('9', 'Opt9'), ('10', 'Opt10')], validators=[DataRequired()])  
 
 pymysql.install_as_MySQLdb()
 
+# Here is about configuration
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('JAWSDB_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('JAWSDB_URL')or 'sqlite:///test.db'
 app.config['SECRET_KEY'] = "iloveeurus"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -39,29 +68,49 @@ class Todo(db.Model):
         return '<Task %r>' % self.id
     
 class Data(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    happy_level = db.Column(db.String(10))
-    sad_level = db.Column(db.String(10))
+    number = db.Column(db.Integer, primary_key=True)
+    id= db.Column(db.String(20))
+    gender=db.Column(db.String(10))
+    age = db.Column(db.Integer)
+    happiness_level = db.Column(db.String(10))
+    pride_level = db.Column(db.String(10))
+    boredom_level = db.Column(db.String(10))
+    sadness_level = db.Column(db.String(10))
+    irritation_level = db.Column(db.String(10))
+
 
 @app.route('/', methods=['GET', 'POST'])
-# Here is something about URL
 def index():
-    form = EmotionForm()
-
+    form = DemographicInfo()
     if form.validate_on_submit():
-        data = Data(happy_level=form.happy_level.data, sad_level=form.sad_level.data)
+        data = form.data
+        data.pop('csrf_token', None)
+        session['index_data'] = data
+        return redirect(url_for('page1'))
+    return render_template('index.html',form=form)
+
+@app.route('/page1', methods=['GET', 'POST'])
+def page1():
+    form = EmotionForm()
+    if form.validate_on_submit():
+        data = form.data
+        data.pop('csrf_token', None)
+        session['page1_data'] = data
+
+        # session['page1_data'] = {'happiness_level': form.happiness_level.data, 'sadness_level': form.sadness_level.data}
+        index_data = session.get('index_data')
+        page1_data = session.get('page1_data')
+        if index_data:
+            combined_data = {**index_data, **page1_data}
+        data = Data(**combined_data)
         db.session.add(data)
         db.session.commit()
-        # with open ("form_data.csv", "a", newline="") as file:
-        #     writer = csv.writer(file)
-        #     writer.writerow(['Happiness','Sadness'])
-        #     writer.writerow([form.data['happy_level'], form.data['sad_level']])
-        return redirect('/')
-        # return "Hello"
-    # Todo: need to change to the next page with url_for()
-        # happy_level = form.happy_level.data
-        # sad_level = form.sad_level.data
-    return render_template('index.html',form=form)
+        return redirect('page_end')
+    return render_template('page1.html',form=form)
+
+@app.route('/page_end')
+def page_end():
+    return render_template('page_end.html')
 
 
 if __name__ == "__main__":
