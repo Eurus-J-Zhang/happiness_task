@@ -52,6 +52,7 @@ class Data(db.Model):
     emo4_sadness = db.Column(db.Integer)
     emo4_irritation = db.Column(db.Integer)
 
+db.create_all()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
