@@ -1,5 +1,4 @@
 from flask import Flask,render_template,url_for,request, redirect, send_from_directory, session
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from forms import EmotionForm1
 from forms import EmotionForm2
@@ -8,51 +7,29 @@ from forms import EmotionForm4
 from forms import DemographicInfo
 import os
 import pymysql
+from models import db, Data
 
 pymysql.install_as_MySQLdb()
 
 # Here is about configuration
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('JAWSDB_URL')or 'sqlite:///test.db'
-app.config['SECRET_KEY'] = "iloveeurus"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
-db = SQLAlchemy(app)
-migrate = Migrate(app,db)
+def create_app():
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('JAWSDB_URL')or 'sqlite:///test.db'
+    app.config['SECRET_KEY'] = "iloveeurus"
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    
-class Data(db.Model):
-    number = db.Column(db.Integer, primary_key=True)
-    id= db.Column(db.String(20))
-    gender=db.Column(db.String(10))
-    age = db.Column(db.Integer)
+    db.init_app(app)
+    # migrate = Migrate(app,db)
 
-    emo1_happiness = db.Column(db.Integer)
-    emo1_pride = db.Column(db.Integer)
-    emo1_boredom = db.Column(db.Integer)
-    emo1_sadness = db.Column(db.Integer)
-    emo1_irritation = db.Column(db.Integer)
+    with app.app_context():
+        db.create_all()
 
-    emo2_happiness = db.Column(db.Integer)
-    emo2_pride = db.Column(db.Integer)
-    emo2_boredom = db.Column(db.Integer)
-    emo2_sadness = db.Column(db.Integer)
-    emo2_irritation = db.Column(db.Integer)
+    return app
 
-    emo3_happiness = db.Column(db.Integer)
-    emo3_pride = db.Column(db.Integer)
-    emo3_boredom = db.Column(db.Integer)
-    emo3_sadness = db.Column(db.Integer)
-    emo3_irritation = db.Column(db.Integer)
+app = create_app()
 
-    emo4_happiness = db.Column(db.Integer)
-    emo4_pride = db.Column(db.Integer)
-    emo4_boredom = db.Column(db.Integer)
-    emo4_sadness = db.Column(db.Integer)
-    emo4_irritation = db.Column(db.Integer)
-
-db.create_all()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
