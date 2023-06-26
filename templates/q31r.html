@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+
+{% block script %}
+<script>
+    function fn1(){
+        window.location="q32";
+    }
+</script>
+
+{% endblock %}
+
+
+{% block title_text %}
+Please read the story and answer the question.
+{% endblock %}
+
+{% block main_text %}
+
+<p class="t_title">
+Modern English has spread around the world since the 17th century as a consequence of 
+the worldwide influence of the British Empire and the United States of America. 
+Through all types of printed and electronic media of these countries, English has become 
+the leading language of international discourse and the lingua franca in many regions and 
+professional contexts such as science, navigation and law. English is the most spoken language 
+in the world and the third-most spoken native language in the world, after Standard Chinese 
+and Spanish. It is the most widely learned second language and is either the official language 
+or one of the official languages in 59 sovereign states. There are more people who have 
+learned English as a second language than there are native speakers. As of 2005, it was 
+estimated that there were over 2 billion speakers of English. English is the majority 
+native language in the United Kingdom, the United States, Canada, Australia, New Zealand and 
+the Republic of Ireland, and is widely spoken in some areas of the Caribbean, Africa, 
+South Asia, Southeast Asia, and Oceania. It is a co-official language of the United Nations, 
+the European Union and many other world and regional international organisations. It is 
+the most widely spoken Germanic language, accounting for at least 70% of speakers of this 
+Indo-European branch.
+<br>
+</p>
+
+
+<p class="t_title">
+    <br>
+    Question 31:  <br>
+    <br>
+    Which of the following language belongs to official languages of the United Nations?<br>
+</p>
+<form id="form">
+    <input type="radio" id="A" name="choice" {% if answer == 'A' %}checked{% endif %}>
+    <label for="A">Swedish.</label><br>
+    <input type="radio" id="B" name="choice" {% if answer == 'B' %}checked{% endif %}>
+    <label for="B">English.</label><br>
+</form>
+
+{% endblock %}
+
+
+{% block result %}
+<div class="result">
+    <div id="correct" style="display: {% if result == 'correct' %}block{% else %}none{% endif %};">
+
+        <p  id = "result"><span>&#10003;</span></p>
+    </div>
+    <div id="wrong" style="display: {% if result == 'wrong' %}block{% else %}none{% endif %};">
+        <p id = "result"><span>&#x2717;</span></p>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block continue %}
+
+<button onclick="fn1()" id="btn1" class = "continue-btn">Continue</button>
+{% endblock %}

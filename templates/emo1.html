@@ -38,50 +38,39 @@
       </tr>
       <tr>
 
-          <td>{{ form.happiness_level.label }}</td>
-          {% for subfield in form.happiness_level %}
+          <td>{{ form.emo1_happiness.label }}</td>
+          {% for subfield in form.emo1_happiness %}
           <td><div class="radio-button">{{ subfield }}</div></td>
           {% endfor %}
       </tr>
       <tr>
-        <td>{{ form.pride_level.label }}</td>
-        {% for subfield in form.pride_level %}
+        <td>{{ form.emo1_pride.label }}</td>
+        {% for subfield in form.emo1_pride %}
         <td><div class="radio-button">{{ subfield }}</div></td>
         {% endfor %}
     </tr>
     <tr>
-        <td>{{ form.boredom_level.label }}</td>
-        {% for subfield in form.boredom_level %}
+        <td>{{ form.emo1_boredom.label }}</td>
+        {% for subfield in form.emo1_boredom %}
         <td><div class="radio-button">{{ subfield }}</div></td>
         {% endfor %}
     </tr>
       <tr>
-          <td>{{ form.sadness_level.label }}</td>
-          {% for subfield in form.sadness_level %}
+          <td>{{ form.emo1_sadness.label }}</td>
+          {% for subfield in form.emo1_sadness %}
           <td><div class="radio-button">{{ subfield }}</div></td>
           {% endfor %}
       </tr>
       <tr>
-        <td>{{ form.irritation_level.label }}</td>
-        {% for subfield in form.irritation_level %}
+        <td>{{ form.emo1_irritation.label }}</td>
+        {% for subfield in form.emo1_irritation %}
         <td><div class="radio-button">{{ subfield }}</div></td>
         {% endfor %}
     </tr>
 
   </table>
-
-  <input type="submit" value="Continue" class = "submitbutton">
+<br><br>
+  <input type="submit" value="Continue" class = "start">
 </form>
 
-
-
-
-
-
-{% endblock %}
-
-{% block second_text %}
-<!-- <p class="t_note">
-    Please continue if you understand and would like to participate. </p>
-</p> -->
 {% endblock %}

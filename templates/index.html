@@ -18,37 +18,29 @@
 
 
 <form method="POST">
-    {{ form.hidden_tag() }}
-
-    <label for="id">Prolific ID</label>
-<br>
-    {{ form.id(id='id') }}
-<br>
-
-    <div class="form-group">
-      <label>Gender</label>
-<!-- <br> -->
-      <div class="form-options">
-        {% for subfield in form.gender %}
-        <label>{{ subfield }} {{ subfield.label }}</label>
-        {% endfor %}
-      </div>
-    </div>
-
-    <label for="age">Age</label>
-    <br>
-    {{ form.age(id='age') }}
-    <br>
-    <input type="submit" value="Start">
+  {{ form.hidden_tag() }}
+  <br>
+  <table class="my-table">
+      <tr>
+          <td><label for="id">Prolific ID:</label></td>
+          <td>{{ form.id(id='id', class = 'text-input') }}</td>
+      </tr>
+      <tr>
+          <td><label>Gender:</label></td>
+          <td>        {% for subfield in form.gender %}
+            <label>{{ subfield }} {{ subfield.label }}</label>
+            {% endfor %}</td>
+      </tr>
+      <tr>
+        <td><label for="age">Age:</label></td>
+        <td>{{ form.age(id='age', class = 'text-input') }}</td>
+    </tr>
+  </table>
+  <br>
+  <br>
+  <input type="submit" value="Start" class="start">
 </form>
 
 
-
-
 {% endblock %}
 
-{% block second_text %}
-<!-- <p class="t_note">
-    Please continue if you understand and would like to participate. </p>
-</p> -->
-{% endblock %}

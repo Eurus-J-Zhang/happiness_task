@@ -4,34 +4,24 @@
         <link rel= "stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
         <link rel="shortcut icon" href="#">
         <title>Interactive Task</title>
-        <script>
-        // function fn1(){
-        //     window.location="../0_story/index.html";
-        // }
-        // function FormSubmit() {
-        //     alert("Experiment complete!");
-        // }
-        </script>
+
+        {% block script %}{% endblock %}
     </head>
     <body>     
         <div class="grid-parent">
 
-            <div class = "title name"> 
-            </div>
             <div class = "instruction"> 
-                <!-- <p class="t_note">
-                    Please read and follow the instrucitons.</p> -->
                 {% block title_text %}{% endblock %}
             </div>
             <div class = "story"> 
                 {% block main_text %}{% endblock %}
             </div>
-            <div class = "choices"> 
-                {% block second_text %}{% endblock %}
+            <div class = "result"> 
+                {% block result %}{% endblock %}
             </div>
-            <!-- <div class = "continue">   
-                <button onclick="fn1()" id="btn1" class = "submitbutton">Continue</button>
-            </div> -->
+            <div class = "continue">   
+                {% block continue %}{% endblock %}
+            </div>
         </div>
     </body>
 </html>
