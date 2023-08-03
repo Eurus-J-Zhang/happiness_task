@@ -4,6 +4,7 @@ from forms import EmotionForm1
 from forms import EmotionForm2
 from forms import EmotionForm3
 from forms import EmotionForm4
+from forms import FeedbackForm
 from forms import DemographicInfo
 import os
 import pymysql
@@ -16,7 +17,7 @@ pymysql.install_as_MySQLdb()
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('JAWSDB_URL')or 'sqlite:///test.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('JAWSDB_URL') or 'sqlite:///test.db'
     app.config['SECRET_KEY'] = "iloveeurus"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -81,17 +82,31 @@ def emo4():
         data = form.data
         data.pop('csrf_token', None)
         session['page4_data'] = data
+        return redirect('emo_end')
+    return render_template('emo4.html',form=form)
+
+@app.route('/emo_end', methods=['GET', 'POST'])
+def emo_end():
+    form = FeedbackForm()
+    if form.validate_on_submit():
+        data = form.data
+        data.pop('csrf_token', None)
+        session['page_end_data'] = data
+
         index_data = session.get('index_data')
         page1_data = session.get('page1_data')
         page2_data = session.get('page2_data')
         page3_data = session.get('page3_data')
         page4_data = session.get('page4_data')
-        combined_data = {**index_data, **page1_data, **page2_data, **page3_data, **page4_data}
+        page_end_data = session.get('page_end_data')
+        
+        combined_data = {**index_data, **page1_data, **page2_data, **page3_data, **page4_data, **page_end_data}
         data = Data(**combined_data)
         db.session.add(data)
         db.session.commit()
+
         return redirect('page_end')
-    return render_template('emo4.html',form=form)
+    return render_template('emo_end.html',form=form)
 
 # Q1
 @app.route('/q1', methods=['GET', 'POST'])

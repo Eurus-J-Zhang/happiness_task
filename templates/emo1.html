@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
 
 {% block title_text %}
-<p class="t_title">Mandatory questions are marked with a star (*)
-</p>
 {% endblock %}
 
 {% block main_text %}
 <p class="t_title">
-  1. What emotions are you feeling now?
+  Here is a questionnaire to access your emotion state at the beginning of the experiment. 
+  And you will encounter it several times in the middle of the task.
+  <br><br>
+
+  How well do the following emotion words describe your current emotional state?
 
 </p>
 
@@ -44,8 +46,8 @@
           {% endfor %}
       </tr>
       <tr>
-        <td>{{ form.emo1_pride.label }}</td>
-        {% for subfield in form.emo1_pride %}
+        <td>{{ form.emo1_joy.label }}</td>
+        {% for subfield in form.emo1_joy %}
         <td><div class="radio-button">{{ subfield }}</div></td>
         {% endfor %}
     </tr>

@@ -1,13 +1,11 @@
 {% extends 'base.html' %}
 
 {% block title_text %}
-<p class="t_title">Mandatory questions are marked with a star (*)
-</p>
 {% endblock %}
 
 {% block main_text %}
 <p class="t_title">
-  2. What emotions are you feeling at this stage?
+  Please again use the following words to access your current emotional state.
 
 </p>
 
@@ -44,8 +42,8 @@
           {% endfor %}
       </tr>
       <tr>
-        <td>{{ form.emo2_pride.label }}</td>
-        {% for subfield in form.emo2_pride %}
+        <td>{{ form.emo2_joy.label }}</td>
+        {% for subfield in form.emo2_joy %}
         <td><div class="radio-button">{{ subfield }}</div></td>
         {% endfor %}
     </tr>
