@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_result.html' %}
 
 
 {% block script %}
@@ -9,10 +9,6 @@
 </script>
  {% endblock %}
 
-
-{% block title_text %}
-Please read the text and answer the question.
-{% endblock %}
 
 {% block main_text %}
 
@@ -53,21 +49,3 @@ Indo-European branch.
 
 {% endblock %}
 
-
-{% block result %}
-<div class="result">
-    <div id="correct" style="display: {% if result == 'correct' %}block{% else %}none{% endif %};">
-
-        <p  id = "result"><span>&#10003;</span></p>
-    </div>
-    <div id="wrong" style="display: {% if result == 'wrong' %}block{% else %}none{% endif %};">
-        <p id = "result"><span>&#x2717;</span></p>
-    </div>
-
-</div>
-{% endblock %}
-
-{% block continue %}
-
-<button onclick="fn1()" id="btn1" class = "continue-btn">Continue</button>
-{% endblock %}

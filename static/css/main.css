@@ -81,3 +81,11 @@ form {
 #bold{
     font-size: 22px;
 }
+
+#correct{
+    background-color: #B5F1DF;
+}
+
+#wrong{
+    background-color: red;
+}

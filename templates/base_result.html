@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel= "stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="shortcut icon" href="#">
+        <title>Interactive Task</title>
+
+        {% block script %}{% endblock %}
+    </head>
+    <body>     
+        <div class="grid-parent">
+
+            <div class = "instruction"> 
+                Please read the text and answer the question.
+            </div>
+            <div class = "story"> 
+                {% block main_text %}{% endblock %}
+            </div>
+            <div class = "result"> 
+                <div class="result">
+                    <div id="correct" style="display: {% if result == 'correct' %}block{% else %}none{% endif %};">
+                        <p id = "result"><span>Correct! Please continue. <br>
+                        </span></p>
+                    </div>
+                    <div id="wrong" style="display: {% if result == 'wrong' %}block{% else %}none{% endif %};">
+                        <p id = "result"><span>Wrong! Please continue.</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class = "continue">   
+                <button onclick="fn1()" id="btn1" class = "continue-btn">Continue</button>
+            </div>
+        </div>
+    </body>
+</html>

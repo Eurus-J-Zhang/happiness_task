@@ -17,7 +17,8 @@ pymysql.install_as_MySQLdb()
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('JAWSDB_URL') or 'sqlite:///test.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('JAWSDB_URL')
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
     app.config['SECRET_KEY'] = "iloveeurus"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -25,100 +26,119 @@ def create_app():
     # migrate = Migrate(app,db)
 
     with app.app_context():
-    #     db.drop_all()
         db.create_all()
 
     return app
 
 app = create_app()
 
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    form = DemographicInfo()
+def handle_form_submission(form, session_key, next_page):
     if form.validate_on_submit():
         data = form.data
         data.pop('csrf_token', None)
-        session['index_data'] = data
-        return redirect(url_for('emo1'))
-    return render_template('index.html',form=form)
+        session[session_key] = data
+        return redirect(next_page)
+    return None
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    session['counter'] = 0
+    form = DemographicInfo()
+    result = handle_form_submission(form, 'index_data', 'emo1')
+    if result:
+        return result
+    return render_template('index.html', form=form)
+
+# def index():
+#     session['counter'] = 0
+#     form = DemographicInfo()
+#     if form.validate_on_submit():
+#         data = form.data
+#         data.pop('csrf_token', None)
+#         session['index_data'] = data
+#         return redirect(url_for('emo1'))
+#     return render_template('index.html',form=form)
 
 @app.route('/emo1', methods=['GET', 'POST'])
 def emo1():
     form = EmotionForm1()
-    if form.validate_on_submit():
-        data = form.data
-        data.pop('csrf_token', None)
-        session['page1_data'] = data
-        return redirect('q1')
+    result = handle_form_submission(form, 'emo1_data', 'q1')
+    if result:
+        return result
     return render_template('emo1.html',form=form)
 
 
 @app.route('/emo2', methods=['GET', 'POST'])
 def emo2():
     form = EmotionForm2()
-    if form.validate_on_submit():
-        data = form.data
-        data.pop('csrf_token', None)
-        session['page2_data'] = data
-        return redirect('q12')
+    result = handle_form_submission(form, 'emo2_data', 'q8')
+    if result:
+        return result
     return render_template('emo2.html',form=form)
 
 @app.route('/emo3', methods=['GET', 'POST'])
 def emo3():
     form = EmotionForm3()
-    if form.validate_on_submit():
-        data = form.data
-        data.pop('csrf_token', None)
-        session['page3_data'] = data
-        return redirect('q23')
+    result = handle_form_submission(form, 'emo3_data', 'q15')
+    if result:
+        return result
     return render_template('emo3.html',form=form)
 
 
 @app.route('/emo4', methods=['GET', 'POST'])
 def emo4():
     form = EmotionForm4()
-    if form.validate_on_submit():
-        data = form.data
-        data.pop('csrf_token', None)
-        session['page4_data'] = data
-        return redirect('emo_end')
+    result = handle_form_submission(form, 'emo4_data', 'emo_end')
+    if result:
+        return result
     return render_template('emo4.html',form=form)
 
 @app.route('/emo_end', methods=['GET', 'POST'])
 def emo_end():
     form = FeedbackForm()
-    if form.validate_on_submit():
-        data = form.data
-        data.pop('csrf_token', None)
-        session['page_end_data'] = data
-
+    result = handle_form_submission(form, 'emo_add_data', 'page_end')
+    if result:
         index_data = session.get('index_data')
-        page1_data = session.get('page1_data')
-        page2_data = session.get('page2_data')
-        page3_data = session.get('page3_data')
-        page4_data = session.get('page4_data')
-        page_end_data = session.get('page_end_data')
+        emo1_data = session.get('emo1_data')
+        emo2_data = session.get('emo2_data')
+        emo3_data = session.get('emo3_data')
+        emo4_data = session.get('emo4_data')
+        emo_add_data = session.get('emo_add_data')
         
-        combined_data = {**index_data, **page1_data, **page2_data, **page3_data, **page4_data, **page_end_data}
+        combined_data = {**index_data, **emo1_data, **emo2_data, **emo3_data, **emo4_data, **emo_add_data}
         data = Data(**combined_data)
         db.session.add(data)
         db.session.commit()
 
-        return redirect('page_end')
+        return result
     return render_template('emo_end.html',form=form)
+
+
+def question_route(question_num, correct_answer, template_name):
+    if request.method == 'POST':
+        answer = request.form['answer']
+        if answer == correct_answer:
+            result = 'correct'
+            session['counter'] += 1 
+        else:
+            result = 'wrong'
+        return render_template(template_name + 'r.html', result=result, answer=answer)
+    return render_template(template_name + '.html')
 
 # Q1
 @app.route('/q1', methods=['GET', 'POST'])
+
 def q1():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q1r.html', result=result, answer=answer)
-    return render_template('q1.html')
+    return question_route(1, 'A', 'q1')
+# def q1():
+#     if request.method == 'POST':
+#         answer = request.form['answer']
+#         if answer == 'A':
+#             result = 'correct'
+#         else:
+#             result = 'wrong'
+#         return render_template('q1r.html', result=result, answer=answer)
+#     return render_template('q1.html')
 
 @app.route('/q1r')
 def q1r():
@@ -127,14 +147,7 @@ def q1r():
 # Q2
 @app.route('/q2', methods=['GET', 'POST'])
 def q2():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q2r.html', result=result, answer=answer)
-    return render_template('q2.html')
+    return question_route(2, 'A', 'q2')
 
 @app.route('/q2r')
 def q2r():
@@ -143,14 +156,7 @@ def q2r():
 # Q3
 @app.route('/q3', methods=['GET', 'POST'])
 def q3():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q3r.html', result=result, answer=answer)
-    return render_template('q3.html')
+    return question_route(3, 'B', 'q3')
 
 @app.route('/q3r')
 def q3r():
@@ -159,14 +165,7 @@ def q3r():
 # Q4
 @app.route('/q4', methods=['GET', 'POST'])
 def q4():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q4r.html', result=result, answer=answer)
-    return render_template('q4.html')
+    return question_route(4, 'A', 'q4')
 
 @app.route('/q4r')
 def q4r():
@@ -175,14 +174,7 @@ def q4r():
 # Q5
 @app.route('/q5', methods=['GET', 'POST'])
 def q5():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q5r.html', result=result, answer=answer)
-    return render_template('q5.html')
+    return question_route(5, 'B', 'q5')
 
 @app.route('/q5r')
 def q5r():
@@ -191,14 +183,7 @@ def q5r():
 # Q6
 @app.route('/q6', methods=['GET', 'POST'])
 def q6():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q6r.html', result=result, answer=answer)
-    return render_template('q6.html')
+    return question_route(6, 'B', 'q6')
 
 @app.route('/q6r')
 def q6r():
@@ -207,14 +192,7 @@ def q6r():
 # Q7
 @app.route('/q7', methods=['GET', 'POST'])
 def q7():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q7r.html', result=result, answer=answer)
-    return render_template('q7.html')
+    return question_route(7, 'A', 'q7')
 
 @app.route('/q7r')
 def q7r():
@@ -223,14 +201,7 @@ def q7r():
 # Q8
 @app.route('/q8', methods=['GET', 'POST'])
 def q8():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q8r.html', result=result, answer=answer)
-    return render_template('q8.html')
+    return question_route(8, 'B', 'q8')
 
 @app.route('/q8r')
 def q8r():
@@ -239,14 +210,7 @@ def q8r():
 # Q9
 @app.route('/q9', methods=['GET', 'POST'])
 def q9():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q9r.html', result=result, answer=answer)
-    return render_template('q9.html')
+    return question_route(9, 'A', 'q9')
 
 @app.route('/q9r')
 def q9r():
@@ -255,14 +219,7 @@ def q9r():
 # Q10
 @app.route('/q10', methods=['GET', 'POST'])
 def q10():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q10r.html', result=result, answer=answer)
-    return render_template('q10.html')
+    return question_route(10, 'B', 'q10')
 
 @app.route('/q10r')
 def q10r():
@@ -271,33 +228,16 @@ def q10r():
 # Q11
 @app.route('/q11', methods=['GET', 'POST'])
 def q11():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q11r.html', result=result, answer=answer)
-    return render_template('q11.html')
+    return question_route(11, 'A', 'q11')
 
 @app.route('/q11r')
 def q11r():
     return render_template('q11r.html')
 
-
-
-
 # Q12
 @app.route('/q12', methods=['GET', 'POST'])
 def q12():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q12r.html', result=result, answer=answer)
-    return render_template('q12.html')
+    return question_route(12, 'A', 'q12')
 
 @app.route('/q12r')
 def q12r():
@@ -306,14 +246,7 @@ def q12r():
 # Q13
 @app.route('/q13', methods=['GET', 'POST'])
 def q13():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q13r.html', result=result, answer=answer)
-    return render_template('q13.html')
+    return question_route(13, 'B', 'q13')
 
 @app.route('/q13r')
 def q13r():
@@ -322,14 +255,7 @@ def q13r():
 # Q14
 @app.route('/q14', methods=['GET', 'POST'])
 def q14():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q14r.html', result=result, answer=answer)
-    return render_template('q14.html')
+    return question_route(14, 'A', 'q14')
 
 @app.route('/q14r')
 def q14r():
@@ -338,14 +264,7 @@ def q14r():
 # Q15
 @app.route('/q15', methods=['GET', 'POST'])
 def q15():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q15r.html', result=result, answer=answer)
-    return render_template('q15.html')
+    return question_route(15, 'B', 'q15')
 
 @app.route('/q15r')
 def q15r():
@@ -354,14 +273,7 @@ def q15r():
 # Q16
 @app.route('/q16', methods=['GET', 'POST'])
 def q16():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q16r.html', result=result, answer=answer)
-    return render_template('q16.html')
+    return question_route(16, 'B', 'q16')
 
 @app.route('/q16r')
 def q16r():
@@ -370,14 +282,7 @@ def q16r():
 # Q17
 @app.route('/q17', methods=['GET', 'POST'])
 def q17():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q17r.html', result=result, answer=answer)
-    return render_template('q17.html')
+    return question_route(17, 'B', 'q17')
 
 @app.route('/q17r')
 def q17r():
@@ -387,14 +292,7 @@ def q17r():
 # Q18
 @app.route('/q18', methods=['GET', 'POST'])
 def q18():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q18r.html', result=result, answer=answer)
-    return render_template('q18.html')
+    return question_route(18, 'B', 'q18')
 
 @app.route('/q18r')
 def q18r():
@@ -403,14 +301,7 @@ def q18r():
 # Q19
 @app.route('/q19', methods=['GET', 'POST'])
 def q19():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q19r.html', result=result, answer=answer)
-    return render_template('q19.html')
+    return question_route(19, 'A', 'q19')
 
 @app.route('/q19r')
 def q19r():
@@ -419,249 +310,22 @@ def q19r():
 # Q20
 @app.route('/q20', methods=['GET', 'POST'])
 def q20():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q20r.html', result=result, answer=answer)
-    return render_template('q20.html')
+    return question_route(20, 'B', 'q20')
 
 @app.route('/q20r')
 def q20r():
     return render_template('q20r.html')
-
-# Q21
-@app.route('/q21', methods=['GET', 'POST'])
-def q21():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q21r.html', result=result, answer=answer)
-    return render_template('q21.html')
-
-@app.route('/q21r')
-def q21r():
-    return render_template('q21r.html')
-
-# Q22
-@app.route('/q22', methods=['GET', 'POST'])
-def q22():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q22r.html', result=result, answer=answer)
-    return render_template('q22.html')
-
-@app.route('/q22r')
-def q22r():
-    return render_template('q22r.html')
-
-# Q23
-@app.route('/q23', methods=['GET', 'POST'])
-def q23():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q23r.html', result=result, answer=answer)
-    return render_template('q23.html')
-
-@app.route('/q23r')
-def q23r():
-    return render_template('q23r.html')
-
-# Q24
-@app.route('/q24', methods=['GET', 'POST'])
-def q24():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q24r.html', result=result, answer=answer)
-    return render_template('q24.html')
-
-@app.route('/q24r')
-def q24r():
-    return render_template('q24r.html')
-
-# Q25
-@app.route('/q25', methods=['GET', 'POST'])
-def q25():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q25r.html', result=result, answer=answer)
-    return render_template('q25.html')
-
-@app.route('/q25r')
-def q25r():
-    return render_template('q25r.html')
-
-# Q26
-@app.route('/q26', methods=['GET', 'POST'])
-def q26():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q26r.html', result=result, answer=answer)
-    return render_template('q26.html')
-
-@app.route('/q26r')
-def q26r():
-    return render_template('q26r.html')
-
-# Q27
-@app.route('/q27', methods=['GET', 'POST'])
-def q27():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q27r.html', result=result, answer=answer)
-    return render_template('q27.html')
-
-@app.route('/q27r')
-def q27r():
-    return render_template('q27r.html')
-
-# Q28
-@app.route('/q28', methods=['GET', 'POST'])
-def q28():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q28r.html', result=result, answer=answer)
-    return render_template('q28.html')
-
-@app.route('/q28r')
-def q28r():
-    return render_template('q28r.html')
-
-# Q29
-@app.route('/q29', methods=['GET', 'POST'])
-def q29():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q29r.html', result=result, answer=answer)
-    return render_template('q29.html')
-
-@app.route('/q29r')
-def q29r():
-    return render_template('q29r.html')
-
-# Q30
-@app.route('/q30', methods=['GET', 'POST'])
-def q30():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q30r.html', result=result, answer=answer)
-    return render_template('q30.html')
-
-@app.route('/q30r')
-def q30r():
-    return render_template('q30r.html')
-
-# Q31
-@app.route('/q31', methods=['GET', 'POST'])
-def q31():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q31r.html', result=result, answer=answer)
-    return render_template('q31.html')
-
-@app.route('/q31r')
-def q31r():
-    return render_template('q31r.html')
-
-# Q32
-@app.route('/q32', methods=['GET', 'POST'])
-def q32():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'A':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q32r.html', result=result, answer=answer)
-    return render_template('q32.html')
-
-@app.route('/q32r')
-def q32r():
-    return render_template('q32r.html')
-
-# Q33
-@app.route('/q33', methods=['GET', 'POST'])
-def q33():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q33r.html', result=result, answer=answer)
-    return render_template('q33.html')
-
-@app.route('/q33r')
-def q33r():
-    return render_template('q33r.html')
-
-# Q34
-@app.route('/q34', methods=['GET', 'POST'])
-def q34():
-    if request.method == 'POST':
-        answer = request.form['answer']
-        if answer == 'B':
-            result = 'correct'
-        else:
-            result = 'wrong'
-        return render_template('q34r.html', result=result, answer=answer)
-    return render_template('q34.html')
-
-@app.route('/q34r')
-def q34r():
-    return render_template('q34r.html')
-
 
 
 @app.route('/page_end')
 def page_end():
     return render_template('page_end.html')
 
+# result page
+@app.route('/page_result')
+def page_result():
+    counter = session.get('counter', 0)
+    return render_template('page_result.html',counter=counter)
 
 if __name__ == "__main__":
     app.run(debug=True)
