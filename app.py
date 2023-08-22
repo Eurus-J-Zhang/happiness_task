@@ -14,7 +14,6 @@ pymysql.install_as_MySQLdb()
 
 # Here is about configuration
 
-
 def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('JAWSDB_URL')
@@ -23,11 +22,8 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
-    # migrate = Migrate(app,db)
-
     with app.app_context():
         db.create_all()
-
     return app
 
 app = create_app()
@@ -210,7 +206,7 @@ def q8r():
 # Q9
 @app.route('/q9', methods=['GET', 'POST'])
 def q9():
-    return question_route(9, 'A', 'q9')
+    return question_route(9, 'B', 'q9')
 
 @app.route('/q9r')
 def q9r():
@@ -287,7 +283,6 @@ def q17():
 @app.route('/q17r')
 def q17r():
     return render_template('q17r.html')
-
 
 # Q18
 @app.route('/q18', methods=['GET', 'POST'])
