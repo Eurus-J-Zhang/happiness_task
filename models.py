@@ -32,4 +32,4 @@ class Data(db.Model):
     emo4_sadness = db.Column(db.Integer)
     emo4_irritation = db.Column(db.Integer)
 
-    feedback = db.Column(db.String(200))
+    feedback = db.Column(db.String(400))
